@@ -1,0 +1,10 @@
+{
+  "name": "eventsource-example",
+  "version": "1.0.0",
+  "description": "Nibbio's EventSource example using EventStore.",
+  "main": "dist/index.js",
+  "repository": "https://github.com/iangarciag/eventsource",
+  "author": "Nibbio Development Team",
+  "license": "ISC",
+  "private": false
+}

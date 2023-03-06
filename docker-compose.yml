@@ -1,0 +1,50 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpassword
+      POSTGRES_DB: pgdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  eventstore:
+    image: eventstore/eventstore:latest
+    restart: always
+    environment:
+      EVENTSTORE_RUN_PROJECTIONS: All
+      EVENTSTORE_START_STANDARD_PROJECTIONS: true
+      EVENTSTORE_EXT_HTTP_PORT: 2113
+      EVENTSTORE_EXT_TCP_PORT: 1113
+    ports:
+      - "2113:2113"
+      - "1113:1113"
+    volumes:
+      - eventstore_data:/var/lib/eventstore
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+      - eventstore
+    environment:
+      DATABASE_URL: postgresql://pguser:pgpassword@postgres:5432/pgdb
+      EVENTSTORE_TCP_PORT: 1113
+      EVENTSTORE_HTTP_PORT: 2113
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+    command:
+      - npm run start:dev
+
+volumes:
+  postgres_data:
+  eventstore_data:
