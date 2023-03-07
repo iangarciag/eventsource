@@ -1,15 +1,7 @@
-FROM node:14
-
-WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install
-
+FROM node:14-alpine
+WORKDIR /index
+COPY package*.json yarn.lock ./
+RUN yarn install --frozen-lockfile --ignore-optional
 COPY . .
-
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["npm", "run", "start"]
+RUN yarn build
+CMD ["node", "dist/index.js"]

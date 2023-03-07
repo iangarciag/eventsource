@@ -1,8 +1,9 @@
-version: '3'
+version: '3.8'
 services:
   postgres:
     image: postgres:latest
-    restart: always
+    restart: unless-stopped
+    container_name: postgres
     environment:
       POSTGRES_USER: pguser
       POSTGRES_PASSWORD: pgpassword
@@ -10,41 +11,50 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - eventsource-network
 
   eventstore:
-    image: eventstore/eventstore:latest
-    restart: always
+    image: eventstore/eventstore:20.10.2-buster-slim
+    container_name: eventstore
     environment:
-      EVENTSTORE_RUN_PROJECTIONS: All
-      EVENTSTORE_START_STANDARD_PROJECTIONS: true
-      EVENTSTORE_EXT_HTTP_PORT: 2113
-      EVENTSTORE_EXT_TCP_PORT: 1113
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_INT_HTTP_PREFIXES=http://*:2113/
+      - EVENTSTORE_HTTP_USE_SSL=False  # disable HTTPS
+      - EVENTSTORE_INSECURE=true
     ports:
       - "2113:2113"
       - "1113:1113"
     volumes:
-      - eventstore_data:/var/lib/eventstore
+      - eventstore-data:/var/lib/eventstore
+    networks:
+      - eventsource-network
 
   app:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: backend
+    restart: unless-stopped
     depends_on:
       - postgres
       - eventstore
     environment:
       DATABASE_URL: postgresql://pguser:pgpassword@postgres:5432/pgdb
-      EVENTSTORE_TCP_PORT: 1113
-      EVENTSTORE_HTTP_PORT: 2113
+      EVENTSTORE_URL: http://eventstore:2113
       NODE_ENV: development
     ports:
       - "3000:3000"
-    volumes:
-      - ./backend:/app
-    command:
-      - npm run start:dev
+    networks:
+      - eventsource-network
 
 volumes:
-  postgres_data:
-  eventstore_data:
+  postgres-data:
+  eventstore-data:
+
+networks:
+  eventsource-network:
+    driver: bridge
