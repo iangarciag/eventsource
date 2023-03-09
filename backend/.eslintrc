@@ -13,7 +13,8 @@
   "plugins": [
     "@typescript-eslint",
     "prettier",
-    "import"
+    "import",
+    "notice"
   ],
   "extends": [
     "airbnb-typescript/base",
@@ -27,6 +28,16 @@
     "import/extensions": [
       "error",
       "never"
+    ],
+    "notice/notice": [
+      "error",
+      {
+        "mustMatch": "\\(c\\) Nibbio [0-9]{0,4}, rights reserved.",
+        "template": "// (c) Nibbio <%= YEAR %>, rights reserved.\n\n",
+        "messages": {
+          "whenFailedToMatch": "Couldn't find 'Copyright notice', are you sure you added it?"
+        }
+      }
     ]
   }
 }
