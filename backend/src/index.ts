@@ -1,9 +1,11 @@
+// (c) Nibbio 2023, rights reserved.
+
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { DataSource } from "typeorm";
 
-async function start() {
+async function start(): Promise<void> {
   const app = express();
   const port = 3000;
 
@@ -23,10 +25,10 @@ async function start() {
   app.use(cors());
 
   app.get("/", (req: Request, res: Response) => {
-    res.send("API");
+    res.status(200).json({ success: true });
   });
 
-  app.listen(port, () => {
+  app.listen(port, (): void => {
     console.log(`Server running at http://localhost:${port}`);
   });
 }
