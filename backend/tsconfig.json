@@ -5,10 +5,15 @@
     "module": "CommonJS",
     "outDir": "dist",
     "strict": true,
+    "types": [
+      "node",
+      "express"
+    ],
     "esModuleInterop": true,
-    "sourceMap": true
+    "sourceMap": false,
+    "emitDecoratorMetadata": true
   },
   "include": [
-    "src/**/*.ts"
+    "**/*.ts"
   ]
 }

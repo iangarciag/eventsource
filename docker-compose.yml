@@ -1,13 +1,18 @@
 version: '3.8'
 services:
   postgres:
-    image: postgres:latest
-    restart: unless-stopped
+    image: postgres:15.2-alpine
+    restart: always
     container_name: postgres
     environment:
       POSTGRES_USER: pguser
       POSTGRES_PASSWORD: pgpassword
       POSTGRES_DB: pgdb
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pguser -d pgdb" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     ports:
       - "5432:5432"
     volumes:
@@ -40,8 +45,10 @@ services:
     container_name: backend
     restart: unless-stopped
     depends_on:
-      - postgres
-      - eventstore
+      postgres:
+        condition: service_healthy
+      eventstore:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://pguser:pgpassword@postgres:5432/pgdb
       EVENTSTORE_URL: http://eventstore:2113

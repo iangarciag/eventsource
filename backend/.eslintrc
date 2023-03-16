@@ -10,25 +10,15 @@
     "es2020": true,
     "node": true
   },
-  "plugins": [
-    "@typescript-eslint",
-    "prettier",
-    "import",
-    "notice"
-  ],
+  "plugins": ["@typescript-eslint", "prettier", "import", "notice"],
   "extends": [
     "airbnb-typescript/base",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended"
   ],
   "rules": {
-    "prettier/prettier": [
-      "error"
-    ],
-    "import/extensions": [
-      "error",
-      "never"
-    ],
+    "prettier/prettier": ["error"],
+    "import/extensions": ["error", "never"],
     "notice/notice": [
       "error",
       {
