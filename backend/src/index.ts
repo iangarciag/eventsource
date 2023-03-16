@@ -1,36 +1,33 @@
 // (c) Nibbio 2023, rights reserved.
 
-import express, { Request, Response } from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import { DataSource } from "typeorm";
+import dotenv from "dotenv";
+import app from "./infra/express/app";
+import { dataSource } from "./infra/data-sources/eventstore.datasource";
 
-async function start(): Promise<void> {
-  const app = express();
-  const port = 3000;
+dotenv.config({ path: "../.env" });
 
-  const dataSource: DataSource = new DataSource({
-    type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "pguser",
-    password: "pgpassword",
-    database: "pgdb",
-    entities: [],
-    synchronize: true,
+process.on("uncaughtException", (error: Error) => {
+  console.log("UNHANDLED EXCEPTION!: SHUTTING DOWN.");
+  console.log(error.name, error.message);
+  console.log(error);
+  process.exit(1);
+});
+
+const port = process.env.PORT || 3000;
+
+const server = app.listen(port, (): void => {
+  dataSource.initialize().then(async (_) => {
+    await dataSource.synchronize(true);
   });
+  console.log(`Server running on ${port}`);
+});
 
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(cors());
+process.on("unhandledRejection", (error: Error) => {
+  console.log(error.name, error.message);
+  console.log(error);
+  console.log("UNHANDLED REJECTION!: SHUTTING DOWN");
 
-  app.get("/", (req: Request, res: Response) => {
-    res.status(200).json({ success: true });
+  server.close((): void => {
+    process.exit(1);
   });
-
-  app.listen(port, (): void => {
-    console.log(`Server running at http://localhost:${port}`);
-  });
-}
-
-start();
+});
