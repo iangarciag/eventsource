@@ -3,15 +3,15 @@
 import { Application } from "./application.entity";
 
 export class Resource {
-  resourceId!: string;
+  id!: string;
 
-  resourceName!: string;
+  name!: string;
 
-  resourceType!: string;
+  type!: string;
 
   application!: Application;
 
   constructor(resource: Partial<Resource>) {
-    Object.assign(resource);
+    Object.assign(this, resource);
   }
 }

@@ -1,11 +1,11 @@
 // (c) Nibbio 2023, rights reserved.
 
 export class Role {
-  roleId!: string;
+  id!: string;
 
-  roleName!: string;
+  name!: string;
 
   constructor(role: Partial<Role>) {
-    Object.assign(role);
+    Object.assign(this, role);
   }
 }

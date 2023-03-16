@@ -6,6 +6,6 @@ export class Application {
   applicationName!: string;
 
   constructor(application: Partial<Application>) {
-    Object.assign(application);
+    Object.assign(this, application);
   }
 }

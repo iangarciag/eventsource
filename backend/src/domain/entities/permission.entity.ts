@@ -14,6 +14,6 @@ export class Permission {
   role!: Role;
 
   constructor(permission: Partial<Permission>) {
-    Object.assign(permission);
+    Object.assign(this, permission);
   }
 }
