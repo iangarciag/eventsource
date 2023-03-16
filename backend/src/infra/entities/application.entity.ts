@@ -11,8 +11,8 @@ export class Application {
   @Column({ unique: true })
   name!: string;
 
-  constructor(user: Partial<Application>) {
-    Object.assign(this, user);
+  constructor(application: Partial<Application>) {
+    Object.assign(this, application);
     if (!this.id) {
       this.id = uuidv4();
     }
