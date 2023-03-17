@@ -1,9 +1,9 @@
 // (c) Nibbio 2023, rights reserved.
 
 export class Application {
-  applicationId!: string;
+  id!: string;
 
-  applicationName!: string;
+  name!: string;
 
   constructor(application: Partial<Application>) {
     Object.assign(this, application);
