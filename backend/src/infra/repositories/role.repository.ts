@@ -20,7 +20,7 @@ export class RoleRepository
 
   async getRoleById(id: string): Promise<Role | null> {
     const roleEntity = await this.findOneBy({ id });
-    return roleEntity ? roleEntity : null;
+    return roleEntity ?? null;
   }
 
   async updateRole(role: Role): Promise<void> {
