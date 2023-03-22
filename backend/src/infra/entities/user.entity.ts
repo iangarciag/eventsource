@@ -1,7 +1,14 @@
 // (c) Nibbio 2023, rights reserved.
 
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { v4 as uuidv4 } from "uuid";
+import { Permission } from "./permission.entity";
 
 @Entity()
 export class User {
@@ -16,6 +23,16 @@ export class User {
 
   @Column({ default: "" })
   lastName!: string;
+
+  @ManyToMany(
+    (type) => Permission,
+    (permission: Permission) => permission.users,
+    {
+      cascade: true,
+    },
+  )
+  @JoinTable()
+  permissions!: Permission[];
 
   constructor(user: Partial<User>) {
     Object.assign(this, user);
