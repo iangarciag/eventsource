@@ -10,16 +10,19 @@ export class RoleRepository
   implements RoleInterface
 {
   async getRoles(): Promise<Role[]> {
-    return this.find();
+    return (await this.find({ relations: ["permissions"] })) as Role[];
   }
 
   async createRole(role: Role): Promise<Role> {
-    const roleEntity = this.create(role);
-    return await this.save(roleEntity);
+    const roleEntity: RoleEntity = this.create(role);
+    return (await this.save(roleEntity)) as Role;
   }
 
   async getRoleById(id: string): Promise<Role | null> {
-    const roleEntity = await this.findOneBy({ id });
+    const roleEntity = (await this.findOne({
+      where: { id },
+      relations: ["permissions"],
+    })) as Role;
     return roleEntity ?? null;
   }
 
