@@ -5,13 +5,13 @@ import { Resource } from "./resource.entity";
 import { Role } from "./role.entity";
 
 export class Permission {
-  permissionId!: string;
+  id!: string;
 
-  user!: User;
+  users!: User[];
 
-  resource!: Resource;
+  resources!: Resource[];
 
-  role!: Role;
+  roles!: Role[];
 
   constructor(permission: Partial<Permission>) {
     Object.assign(this, permission);
