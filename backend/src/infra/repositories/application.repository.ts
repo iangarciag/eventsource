@@ -10,8 +10,8 @@ export class ApplicationRepository
   implements ApplicationInterface
 {
   async createApplication(application: Application): Promise<Application> {
-    const applicationEntity = this.create(application);
-    return await this.save(applicationEntity);
+    const applicationEntity: ApplicationEntity = this.create(application);
+    return (await this.save(applicationEntity)) as Application;
   }
 
   async deleteApplication(id: string): Promise<void> {
@@ -19,12 +19,17 @@ export class ApplicationRepository
   }
 
   async getApplicationById(id: string): Promise<Application | null> {
-    const applicationEntity = await this.findOneBy({ id });
-    return applicationEntity ?? null;
+    const applicationEntity = await this.findOne({
+      where: { id },
+      relations: ["resources"],
+    });
+    return (applicationEntity as Application) ?? null;
   }
 
   async getApplications(): Promise<Application[]> {
-    return this.find();
+    return (await this.find({
+      relations: ["resources"],
+    })) as Application[];
   }
 
   async updateApplication(application: Application): Promise<void> {
