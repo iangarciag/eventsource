@@ -2,7 +2,8 @@
 
 import dotenv from "dotenv";
 import app from "./infra/express/app";
-import { dataSource } from "./infra/data-sources/eventstore.datasource";
+import { dataSource } from "./infra/data-sources/typeorm.datasource";
+import { DataSource } from "typeorm";
 
 dotenv.config({ path: "../.env" });
 
@@ -16,8 +17,8 @@ process.on("uncaughtException", (error: Error) => {
 const port = process.env.PORT || 3000;
 
 const server = app.listen(port, (): void => {
-  dataSource.initialize().then(async (_) => {
-    await dataSource.synchronize(true);
+  dataSource.initialize().then(async (_: DataSource): Promise<void> => {
+    await dataSource.synchronize(false);
   });
   console.log(`Server running on ${port}`);
 });
