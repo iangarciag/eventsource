@@ -3,7 +3,7 @@
 import { Router } from "express";
 import { ApplicationRepository } from "../../repositories/application.repository";
 import { Application } from "../../entities/application.entity";
-import { dataSource } from "../../data-sources/eventstore.datasource";
+import { dataSource } from "../../data-sources/typeorm.datasource";
 import { ApplicationController } from "../../../application/controllers/application.controller";
 
 export default function createApplicationRouter() {
@@ -24,6 +24,14 @@ export default function createApplicationRouter() {
   router.get(
     "/",
     applicationController.getApplications.bind(applicationController),
+  );
+  router.get(
+    "/:id/events",
+    applicationController.getEvents.bind(applicationController),
+  );
+  router.post(
+    "/:id/clone",
+    applicationController.eventClone.bind(applicationController),
   );
   router.get(
     "/:id",

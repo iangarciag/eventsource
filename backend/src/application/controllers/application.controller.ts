@@ -4,12 +4,67 @@ import { ApplicationRepository } from "../../infra/repositories/application.repo
 import { Request, Response } from "express";
 import APIError from "../../utils/APIError";
 import { Application } from "../../domain/entities/application.entity";
+import { EventStoreInterface } from "../interfaces/eventstore.interface";
+import { EventFetcher } from "../../infra/eventstore/generics.events";
+import { AppEvents, EntityEvent } from "../../utils/Events";
 
-export class ApplicationController {
+export class ApplicationController implements EventStoreInterface {
   private readonly applicationRepository: ApplicationRepository;
+  private readonly applicationEventFetcher: EventFetcher<Application>;
 
   constructor(applicationRepository: ApplicationRepository) {
     this.applicationRepository = applicationRepository;
+    this.applicationEventFetcher = new EventFetcher<Application>();
+  }
+
+  async getEvents(req: Request, res: Response): Promise<void> {
+    try {
+      const id: string = req.params.id;
+      const streamName: string = `APPLICATION-${id}`;
+      const applicationEvents: AppEvents[] =
+        await this.applicationEventFetcher.getEvents(streamName);
+      res.status(200).json(applicationEvents);
+    } catch (error) {
+      console.error(error);
+      throw new APIError(
+        "An error occurred while retrieving application events.",
+        500,
+      );
+    }
+  }
+
+  async eventClone(req: Request, res: Response): Promise<void> {
+    try {
+      const id: string = req.params.id;
+      const streamName: string = `APPLICATION-${id}`;
+      const latestEvent: AppEvents | null =
+        await this.applicationEventFetcher.getLastEvent(streamName);
+      if (!latestEvent) {
+        res.status(404).json({ error: "Application not found." });
+      } else {
+        if (latestEvent.type != EntityEvent.DELETED) {
+          const applicationToClone: Application = latestEvent.data
+            .payload as Application;
+          const newApplicationData = {
+            name: applicationToClone.name,
+            resources: applicationToClone.resources,
+          } as Application;
+          const createdApplication: Application =
+            await this.applicationRepository.createApplication(
+              newApplicationData,
+            );
+          res.status(200).json(createdApplication);
+        } else {
+          res.status(204).json({ error: "Application deleted." });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      throw new APIError(
+        "An error occurred while event cloning application.",
+        500,
+      );
+    }
   }
 
   async getApplications(req: Request, res: Response): Promise<void> {
