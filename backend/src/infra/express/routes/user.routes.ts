@@ -3,7 +3,7 @@
 import { Router } from "express";
 import { UserRepository } from "../../repositories/user.repository";
 import { User } from "../../entities/user.entity";
-import { dataSource } from "../../data-sources/eventstore.datasource";
+import { dataSource } from "../../data-sources/typeorm.datasource";
 import { UserController } from "../../../application/controllers/user.controller";
 
 export default function createUserRouter() {
