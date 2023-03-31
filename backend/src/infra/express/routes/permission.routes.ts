@@ -3,7 +3,7 @@
 import { Router } from "express";
 import { PermissionRepository } from "../../repositories/permission.repository";
 import { Permission } from "../../entities/permission.entity";
-import { dataSource } from "../../data-sources/eventstore.datasource";
+import { dataSource } from "../../data-sources/typeorm.datasource";
 import { PermissionController } from "../../../application/controllers/permission.controller";
 
 export default function createPermissionRouter() {
