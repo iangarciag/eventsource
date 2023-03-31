@@ -3,7 +3,7 @@
 import { Router } from "express";
 import { ResourceRepository } from "../../repositories/resource.repository";
 import { Resource } from "../../entities/resource.entity";
-import { dataSource } from "../../data-sources/eventstore.datasource";
+import { dataSource } from "../../data-sources/typeorm.datasource";
 import { ResourceController } from "../../../application/controllers/resource.controller";
 
 export default function createResourceRouter() {
