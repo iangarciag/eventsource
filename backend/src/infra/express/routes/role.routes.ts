@@ -4,7 +4,7 @@ import { Router } from "express";
 import { RoleRepository } from "../../repositories/role.repository";
 import { RoleController } from "../../../application/controllers/role.controller";
 import { Role } from "../../entities/role.entity";
-import { dataSource } from "../../data-sources/eventstore.datasource";
+import { dataSource } from "../../data-sources/typeorm.datasource";
 
 export default function createRoleRouter() {
   const router: Router = Router();
@@ -17,6 +17,8 @@ export default function createRoleRouter() {
 
   router.post("/", roleController.createRole.bind(roleController));
   router.get("/", roleController.getRoles.bind(roleController));
+  router.get("/:id/events", roleController.getEvents.bind(roleController));
+  router.post("/:id/clone", roleController.eventClone.bind(roleController));
   router.get("/:id", roleController.getRoleById.bind(roleController));
   router.put("/:id", roleController.updateRole.bind(roleController));
   router.delete("/:id", roleController.deleteRole.bind(roleController));
